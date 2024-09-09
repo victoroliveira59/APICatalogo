@@ -18,10 +18,6 @@ builder.Services.AddDbContext<APIWebContext>(options =>
     options.UseMySql(mySqlConnection ,ServerVersion.AutoDetect(mySqlConnection)));
 
 
-
-
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
