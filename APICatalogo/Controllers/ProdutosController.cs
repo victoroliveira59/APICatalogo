@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace APICatalogo.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class ProdutosController : ControllerBase
     {
@@ -21,7 +21,7 @@ namespace APICatalogo.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Produto>> Get() 
         { 
-            var produtos = _context.Produtos.ToList();
+            var produtos = _context.Produtos.AsNoTracking().Take(5).ToList();
             if(produtos is null)
             {
                 return NotFound();
