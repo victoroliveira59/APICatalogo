@@ -5,6 +5,7 @@ using APICatalogo.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
 
 namespace APICatalogo.Controllers
@@ -13,11 +14,13 @@ namespace APICatalogo.Controllers
     [ApiController]
     public class CategoriasController : ControllerBase
     {
-        public readonly APIWebContext _context;
+        private readonly APIWebContext _context;
+        private readonly ILogger<CategoriasController> _logger;
 
-        public CategoriasController(APIWebContext context)
+        public CategoriasController(APIWebContext context,ILogger<CategoriasController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -37,11 +40,12 @@ namespace APICatalogo.Controllers
 
         public ActionResult<Categoria> Get(int id)
         {
-
-
             var categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
             if (categoria is null)
-                return NotFound();
+            {
+                _logger.LogWarning($"A categoria não foi encontrada pelo {id}");
+            }
+                
 
             return categoria;
             return Ok();
