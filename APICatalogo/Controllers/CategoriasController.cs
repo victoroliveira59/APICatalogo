@@ -1,4 +1,5 @@
 ﻿using APICatalogo.Context;
+using APICatalogo.Filters;
 using APICatalogo.Models;
 
 using Microsoft.AspNetCore.Http;
@@ -20,6 +21,7 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet]
+        [ServiceFilter(typeof(ApiLoggingFilter))] 
         public ActionResult<IEnumerable<Categoria>> Get()
         {
             return _context.Categorias.AsNoTracking().Take(5).ToList();
@@ -32,9 +34,10 @@ namespace APICatalogo.Controllers
         }
 
         [HttpGet("{id}", Name ="ObterCategoria")]
+
         public ActionResult<Categoria> Get(int id)
         {
-            throw new Exception("Exceçãp ao retornar uma categoria pelo id");
+
 
             var categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
             if (categoria is null)
