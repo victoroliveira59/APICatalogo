@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 
 using APICatalogo.Context;
+using APICatalogo.Extensions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -28,6 +29,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.ConfigureExceptionHandler();
 }
 
 app.UseHttpsRedirection();
