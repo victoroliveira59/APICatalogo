@@ -1,12 +1,6 @@
-﻿using APICatalogo.Context;
-using APICatalogo.Filters;
+﻿using APICatalogo.Interface;
 using APICatalogo.Models;
-
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Build.Framework;
-using Microsoft.EntityFrameworkCore;
 
 namespace APICatalogo.Controllers
 {
@@ -14,53 +8,48 @@ namespace APICatalogo.Controllers
     [ApiController]
     public class CategoriasController : ControllerBase
     {
-        private readonly APIWebContext _context;
+        private readonly IRepository<Categoria> _repository;
         private readonly ILogger<CategoriasController> _logger;
+       
 
-        public CategoriasController(APIWebContext context,ILogger<CategoriasController> logger)
+        public CategoriasController(IRepository<Categoria> repository, ILogger<CategoriasController> logger)
         {
-            _context = context;
+            _repository = repository;
             _logger = logger;
         }
 
         [HttpGet]
-        [ServiceFilter(typeof(ApiLoggingFilter))] 
         public ActionResult<IEnumerable<Categoria>> Get()
         {
-            return _context.Categorias.AsNoTracking().Take(5).ToList();
-        }
-
-        [HttpGet("produtos")]
-        public ActionResult<IEnumerable<Categoria>> GetCategoriaProdutos()
-        {
-            return _context.Categorias.Include(p => p.Produtos).ToList();
+            var categoria = _repository.GetAll().ToList();
+            return Ok(categoria);
         }
 
         [HttpGet("{id}", Name ="ObterCategoria")]
 
         public ActionResult<Categoria> Get(int id)
         {
-            var categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
+            var categoria = _repository.Get(c => c.CategoriaId == id);
             if (categoria is null)
             {
                 _logger.LogWarning($"A categoria não foi encontrada pelo {id}");
             }
-                
 
-            return categoria;
-            return Ok();
+            return Ok(categoria);
         }
 
         [HttpPost]
-        public ActionResult Post(Categoria categoria)
+        public ActionResult Post(Categoria? categoria)
         {
             if (categoria is null)
+            {
+                _logger.LogWarning($"Dados inválidoas.");
                 return BadRequest();
+            }
+                
 
-            _context.Categorias.Add(categoria);
-            _context.SaveChanges();
-            return new CreatedAtRouteResult("ObterCategoria", 
-                new { id = categoria.CategoriaId }, categoria);
+            var categoriaCriada = _repository.Create(categoria);
+            return CreatedAtRoute("ObterCategoria", new { id = categoriaCriada!.CategoriaId }, categoriaCriada);
 
 
         }
@@ -69,20 +58,28 @@ namespace APICatalogo.Controllers
         public ActionResult Put(int id, Categoria categoria)
         {
             if (id != categoria.CategoriaId)
-                return NotFound();
-            _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
-            _context.Entry(categoria).State = EntityState.Modified;
-            _context.SaveChanges();
-            return Ok();
+            {
+                _logger.LogWarning($"Dados Invalidos.");
+                return BadRequest("Dados Invalidos.");
+            }
+
+
+            _repository.Update(categoria);
+            return Ok(categoria);
         }
 
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            var categoria = _context.Categorias.FirstOrDefault(c => c.CategoriaId == id);
-            _context.Categorias.Remove(categoria);
-            _context.SaveChanges();
-            return Ok();
+            var categoria = _repository.Get(c => c.CategoriaId == id);
+            if (categoria == null)
+            {
+                _logger.LogWarning($"Categoria com id={id} não encontrada.");
+                return NotFound($"Categoria com id={id} não encontrada.");
+            }
+
+            var categoriaExcluida = _repository.Delete(categoria);
+            return Ok(categoria);
         }
 
     }

@@ -27,5 +27,10 @@ public class Produto
     public DateTime DataCadastro { get; set; }
     public int CategoriaId {  get; set; }
     public Categoria? Categoria { get; set; } = null;
+
+    public object Where(Func<object, bool> func)
+    {
+        throw new NotImplementedException();
+    }
 }
 

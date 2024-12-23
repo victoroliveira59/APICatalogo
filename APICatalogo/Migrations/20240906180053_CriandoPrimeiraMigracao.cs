@@ -62,7 +62,7 @@ namespace APICatalogo.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Produtos_CategoriaId",
+                name: "IX_Produtos_CategoriaId",       
                 table: "Produtos",
                 column: "CategoriaId");
         }

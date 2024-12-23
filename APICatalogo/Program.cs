@@ -3,9 +3,12 @@ using System.Text.Json.Serialization;
 using APICatalogo.Context;
 using APICatalogo.Extensions;
 using APICatalogo.Filters;
-
+using APICatalogo.Interface;
+using APICatalogo.Repository;
+using Microsoft.Build.Framework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using NuGet.Protocol.Core.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +26,9 @@ builder.Services.AddDbContext<APIWebContext>(options =>
     options.UseMySql(mySqlConnection ,ServerVersion.AutoDetect(mySqlConnection)));
 
 builder.Services.AddScoped<ApiLoggingFilter>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 
 builder.Services.AddControllers(options =>
 {
@@ -41,6 +47,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.ConfigureExceptionHandler();
+    
 }
 
 app.UseHttpsRedirection();
