@@ -364,3 +364,7 @@ FodyWeavers.xsd
 /APICatalogo/appsettings.json
 /APICatalogo/appsettings.json
 /APICatalogo/appsettings.Development.json
+/.idea/.idea.APICatalogo/.idea/.gitignore
+/.idea/.idea.APICatalogo/.idea/dataSources.xml
+/.idea/.idea.APICatalogo/.idea/vcs.xml
+/APICatalogo/.gitignore
