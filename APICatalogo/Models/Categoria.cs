@@ -15,8 +15,6 @@ public class Categoria
     [Required]
     [StringLength(100)]
     public string? Nome { get; set; }
-    [Required]
-    [StringLength(300)]
     public string? ImagemUrl { get; set; }
     [JsonIgnore]
     public ICollection<Produto>? Produtos { get; set; }

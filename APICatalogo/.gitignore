@@ -9,6 +9,8 @@
 *.sln.docstates
 *.xml
 *.json
+*.idea
+*.vscode
 
 
 # User-specific files (Mono Auto Generated)
