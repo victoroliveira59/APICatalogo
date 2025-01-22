@@ -8,20 +8,20 @@ namespace APICatalogo.Controllers
     [ApiController]
     public class CategoriasController : ControllerBase
     {
-        private readonly IRepository<Categoria> _repository;
-        private readonly ILogger<CategoriasController> _logger;
+        private readonly ILogger<CategoriasController> _logger; 
+        private readonly IUnitOfWork _uof;
        
 
-        public CategoriasController(IRepository<Categoria> repository, ILogger<CategoriasController> logger)
+        public CategoriasController( ILogger<CategoriasController> logger, IUnitOfWork uof)
         {
-            _repository = repository;
             _logger = logger;
+            _uof = uof;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<Categoria>> Get()
         {
-            var categoria = _repository.GetAll().ToList();
+            var categoria = _uof.CategoryRepository.GetAll();
             return Ok(categoria);
         }
 
@@ -29,7 +29,7 @@ namespace APICatalogo.Controllers
 
         public ActionResult<Categoria> Get(int id)
         {
-            var categoria = _repository.Get(c => c.CategoriaId == id);
+            var categoria = _uof.CategoryRepository.Get(c => c.CategoriaId == id);
             if (categoria is null)
             {
                 _logger.LogWarning($"A categoria não foi encontrada pelo {id}");
@@ -48,7 +48,8 @@ namespace APICatalogo.Controllers
             }
                 
 
-            var categoriaCriada = _repository.Create(categoria);
+            var categoriaCriada = _uof.CategoryRepository.Create(categoria);
+            _uof.Commit();
             return CreatedAtRoute("ObterCategoria", new { id = categoriaCriada!.CategoriaId }, categoriaCriada);
 
 
@@ -64,21 +65,23 @@ namespace APICatalogo.Controllers
             }
 
 
-            _repository.Update(categoria);
+            _uof.CategoryRepository.Update(categoria);
+            _uof.Commit();
             return Ok(categoria);
         }
 
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            var categoria = _repository.Get(c => c.CategoriaId == id);
+            var categoria = _uof.CategoryRepository.Get(c => c.CategoriaId == id);
             if (categoria == null)
             {
                 _logger.LogWarning($"Categoria com id={id} não encontrada.");
                 return NotFound($"Categoria com id={id} não encontrada.");
             }
 
-            var categoriaExcluida = _repository.Delete(categoria);
+            var categoriaExcluida = _uof.CategoryRepository.Delete(categoria);
+            _uof.Commit();
             return Ok(categoria);
         }
 
