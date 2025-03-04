@@ -368,3 +368,4 @@ FodyWeavers.xsd
 /.idea/.idea.APICatalogo/.idea/dataSources.xml
 /.idea/.idea.APICatalogo/.idea/vcs.xml
 /APICatalogo/.gitignore
+/.idea/config/applicationhost.config
